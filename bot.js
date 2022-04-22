@@ -13,10 +13,10 @@ const bot = new Telegraf(process.env.BOT_TOKEN)
 bot.start(greeting.hello)
 
 const hello_re = /\/(hi|hello|привет|здравствуй(те)?)!*/i
-const delete_re = /\/(del(ete)?)|(уд(ал(ить)?)?).*/i
+const delete_re = /\/(del(ete)?|уд(ал(ить)?)?).*/i
 const calc_re = /^[\d-+*/\.\,\s\(\)]+=$/
-const help_re = /\/(help)|(справка)/i
-const list_re = /\/(list)|(список)/i
+const help_re = /\/(help|справ(ка)?)/i
+const list_re = /\/(list|спис(ок)?)/i
 
 const parse = () => {
     return (ctx) => {

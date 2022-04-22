@@ -56,7 +56,7 @@ const getCronCmd = (msg) => {
     if (re.test(msg)) {
         time = msg.match(re)[0]
         valid = cron.validate(time)
-        console.log(time, valid)
+        console.log(time, '| validate: ', valid)
         msg = msg.replace(re, '')
     }
 
