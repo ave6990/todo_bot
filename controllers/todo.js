@@ -5,6 +5,11 @@ import 'fs'
 const db = {}
 const tasks = []
 
+const reply = (ctx, msg) => {
+    ctx.replyWithHTML(msg)
+    console.log(msg)
+}
+
 const todo = async (ctx) => {
     const data = parseData(ctx)
 
@@ -15,23 +20,19 @@ const todo = async (ctx) => {
 
         db[data.uid].push(data)
 
-        console.log(data.cronTime, 'msg: ', data.message)
-
         try {
             const task = await cron.schedule(data.cronTime, () => {
-                ctx.replyWithHTML(`<b>Напоминание:</b>\n${data.message}`)
-                console.log(data.message)
+                reply(ctx, `<b>Напоминание:</b>\n${data.message}`)
             })
 
             data.task = task
         } catch (e) {
-            ctx.reply(e)
-            console.log(e)
+            reply(ctx, e)
         }
 
-        ctx.replyWithHTML(`<b>Добавлено напоминание.</b>\n<code>${data.message}</code>`)
+        reply(ctx, `<b>Добавлено напоминание.</b>\n<code>${data.message}</code>`)
     } else {
-        ctx.replyWithHTML('<b>Неверный формат данных.</b>')
+        reply(ctx, '<b>Неверный формат данных.</b>')
     }
 }
 
@@ -56,7 +57,6 @@ const getCronCmd = (msg) => {
     if (re.test(msg)) {
         time = msg.match(re)[0]
         valid = cron.validate(time)
-        console.log(time, '| validate: ', valid)
         msg = msg.replace(re, '')
     }
 
@@ -66,14 +66,14 @@ const getCronCmd = (msg) => {
 const list = (ctx) => {
     const id = ctx.update.message.from.id
     
-    if (db[id]) {
+    if (db[id] && db[id].length > 0) {
         db[id].forEach( (rec, i) => {
             let msg = `<b>${i} Date:</b> ${rec.date}\n`
             msg = `${msg}<b>Message:</b> ${rec.message}\n<b>CronTime:</b> ${rec.cronTime}`
-            ctx.replyWithHTML(msg)
+            reply(ctx, msg)
         } )
     } else {
-        ctx.replyWithHTML('<b>Напоминания отсутствуют.</b>')
+        reply(ctx, '<b>Напоминания отсутствуют.</b>')
     }
 }
 
@@ -96,9 +96,9 @@ const deleteRecords = (ctx) => {
             }
         } )
 
-        ctx.replyWithHTML(`<b>Удалены напоминания:</b>\n${delNums.join()}`)
+        reply(ctx, `<b>Удалены напоминания:</b>\n${delNums.join()}`)
     } else {
-        ctx.replyWithHTML('<b>Список напоминаний пуст.</b>')
+        reply(ctx, '<b>Список напоминаний пуст.</b>')
     }
 }
 
