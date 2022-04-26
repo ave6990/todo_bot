@@ -1,5 +1,5 @@
 import { Markup } from 'telegraf'
-import cron from 'node-cron'
+import { Cron } from 'croner'
 import 'fs'
 
 const db = {}
@@ -10,7 +10,7 @@ const reply = (ctx, msg) => {
     ctx.replyWithHTML(msg)
 }
 
-const todo = async (ctx) => {
+const todo = (ctx) => {
     const data = parseData(ctx)
 
     if (data.valid) {
@@ -21,9 +21,10 @@ const todo = async (ctx) => {
         db[data.uid].push(data)
 
         try {
-            const task = await cron.schedule(data.cronTime, () => {
+            const task = Cron(data.cronTime, () => {
                 reply(ctx, `<b>Напоминание:</b>\n${data.message}`)
             })
+
 
             data.task = task
         } catch (e) {
@@ -56,7 +57,9 @@ const getCronCmd = (msg) => {
 
     if (re.test(msg)) {
         time = msg.match(re)[0]
-        valid = cron.validate(time)
+        /* @debug validate thimestamp */
+        //valid = cron.validate(time)
+        valid = true
         msg = msg.replace(re, '')
     }
 
