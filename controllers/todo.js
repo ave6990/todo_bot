@@ -6,8 +6,8 @@ const db = {}
 const tasks = []
 
 const reply = (ctx, msg) => {
-    ctx.replyWithHTML(msg)
     console.log(msg)
+    ctx.replyWithHTML(msg)
 }
 
 const todo = async (ctx) => {
